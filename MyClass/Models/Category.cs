@@ -14,7 +14,7 @@ namespace MyClass.Models
         [Key]
         public int Id {get; set;}
         [Required(ErrorMessage = "Tên loại sản phẩm không để trống!")]
-        [StringLength(255)]
+        [Display(Name="Danh Mục")]
         public string Name { get; set;}
 
         public string Slug { get; set; }

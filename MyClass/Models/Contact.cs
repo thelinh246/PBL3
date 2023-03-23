@@ -14,7 +14,21 @@ namespace MyClass.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public string FullName { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public string Phone { get; set; }
+        [Required]
+        public string Title { get; set; }
+        [Required]
+        public String Content { get; set; }
+        public int? CreatedBy { get; set; }
+        public DateTime? CreatedAt { get; set; }
+        public int? UpdateBy { get; set; }
+        public DateTime? UpdateAt { get; set; }
+        public int? Status { get; set; }
+
 
     }
 }
