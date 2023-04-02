@@ -8,8 +8,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyClass.Models
 {
-    [Table("Suppliders")]
-    public class Supplider
+    [Table("Suppliers")]
+    public class Supplier
     {
         [Key]
         public int Id { get; set; }
@@ -21,7 +21,7 @@ namespace MyClass.Models
         public string Phone { get; set; }
 
         public string Email { get; set; }
-        public int? Order { get; set; }
+        public int? Orders { get; set; }
         public int? CreatedBy { get; set; }
         public DateTime? CreatedAt { get; set; }
         public int? UpdateBy { get; set; }

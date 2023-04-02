@@ -7,17 +7,18 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MyClass.Models;
+using MyClass.DAO;
 
 namespace ShopLap_SLT.Areas.Admin.Controllers
 {
     public class ProductController : Controller
     {
-        private MyDBContext db = new MyDBContext();
+        private ProductDAO productDAO = new ProductDAO();
 
         // GET: Admin/Product
         public ActionResult Index()
         {
-            return View(db.Products.ToList());
+            return View(productDAO.getList("Index"));
         }
 
         // GET: Admin/Product/Details/5
@@ -27,7 +28,7 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productDAO.getRow(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -50,8 +51,7 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Products.Add(product);
-                db.SaveChanges();
+                productDAO.Insert(product);
                 return RedirectToAction("Index");
             }
 
@@ -65,7 +65,7 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productDAO.getRow(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -82,8 +82,7 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
+                productDAO.Update(product);
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -96,7 +95,7 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Products.Find(id);
+            Product product = productDAO.getRow(id);
             if (product == null)
             {
                 return HttpNotFound();
@@ -109,19 +108,73 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
+            Product product = productDAO.getRow(id);
+            productDAO.Delete(product);
             return RedirectToAction("Index");
         }
-
-        protected override void Dispose(bool disposing)
+        public ActionResult Trash()
         {
-            if (disposing)
+            return View(productDAO.getList("Trash"));
+        }
+        public ActionResult Status(int? id)
+        {
+            if (id == null)
             {
-                db.Dispose();
+                TempData["message"] = new XMessage("danger", "Không tìm thấy danh mục");
+                return RedirectToAction("Index", "Product");
             }
-            base.Dispose(disposing);
+            Product product = productDAO.getRow(id);
+            if (product == null)
+            {
+                TempData["message"] = new XMessage("danger", "Không tìm thấy danh mục");
+                return RedirectToAction("Index", "Product");
+            }
+            product.Status = (product.Status == 1) ? 2 : 1;
+            product.UpdateBy = Convert.ToInt32(Session["UserId"].ToString());
+            product.UpdateAt = DateTime.Now;
+            productDAO.Update(product);
+            TempData["message"] = new XMessage("success", "Cập nhật trạng thái thành công");
+            return RedirectToAction("Index", "Product");
+        }
+        public ActionResult DelTrash(int? id)
+        {
+            if (id == null)
+            {
+                TempData["message"] = new XMessage("danger", "Không tìm thấy danh mục");
+                return RedirectToAction("Index", "Product");
+            }
+            Product product = productDAO.getRow(id);
+            if (product == null)
+            {
+                TempData["message"] = new XMessage("danger", "Không tìm thấy danh mục");
+                return RedirectToAction("Index", "Product");
+            }
+            product.Status = 0;
+            product.UpdateBy = Convert.ToInt32(Session["UserId"].ToString());
+            product.UpdateAt = DateTime.Now;
+            productDAO.Update(product);
+            TempData["message"] = new XMessage("success", "Bỏ vào thùng rác thành công");
+            return RedirectToAction("Index", "Product");
+        }
+        public ActionResult Retrash(int? id)
+        {
+            if (id == null)
+            {
+                TempData["message"] = new XMessage("danger", "Không tìm thấy danh mục");
+                return RedirectToAction("Trash", "Product");
+            }
+            Product product = productDAO.getRow(id);
+            if (product == null)
+            {
+                TempData["message"] = new XMessage("danger", "Không tìm thấy danh mục");
+                return RedirectToAction("Trash", "Product");
+            }
+            product.Status = 2;
+            product.UpdateBy = Convert.ToInt32(Session["UserId"].ToString());
+            product.UpdateAt = DateTime.Now;
+            productDAO.Update(product);
+            TempData["message"] = new XMessage("success", "Khôi phục danh mục thành công");
+            return RedirectToAction("Trash", "Product");
         }
     }
 }

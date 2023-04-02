@@ -15,6 +15,7 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         CategoryDAO categoryDAO = new CategoryDAO();
+        LinkDAO linkDAO = new LinkDAO();
 
         public object Viewbag { get; private set; }
 
@@ -72,7 +73,14 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
                 }
                 category.CreatedBy = Convert.ToInt32(Session["UserId"].ToString());
                 category.CreatedAt = DateTime.Now;
-                categoryDAO.Insert(category);
+                if (categoryDAO.Insert(category) == 1)
+                {
+                    Link link = new Link();
+                    link.Slug = category.Slug;
+                    link.TableId = category.Id;
+                    link.TypeLink = "category";
+                    linkDAO.Insert(link);
+                }
                 TempData["message"] = new XMessage("success", "Thêm thành công");
                 return RedirectToAction("Index");
             }
@@ -122,7 +130,12 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
                 }
                 category.UpdatedBy = Convert.ToInt32(Session["UserId"].ToString());
                 category.UpdatedAt = DateTime.Now;
-                categoryDAO.Update(category);
+                if (categoryDAO.Update(category) == 1)
+                {
+                    Link link = linkDAO.getRow(category.Id, "category");
+                    link.Slug = category.Slug;
+                    linkDAO.Update(link);
+                }
                 TempData["message"] = new XMessage("success", "Cập nhật thành công");
                 return RedirectToAction("Index");
             }
@@ -152,7 +165,11 @@ namespace ShopLap_SLT.Areas.Admin.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             Category category = categoryDAO.getRow(id);
-            categoryDAO.Delete(category);
+            Link link = linkDAO.getRow(category.Id, "category");
+            if (categoryDAO.Delete(category) == 1)
+            {
+                linkDAO.Delete(link);
+            }
             TempData["message"] = new XMessage("success", "Xóa thành công");
             return RedirectToAction("Trash", "Category");
         }

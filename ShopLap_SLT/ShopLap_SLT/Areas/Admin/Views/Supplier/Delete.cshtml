@@ -1,4 +1,4 @@
-﻿@model MyClass.Models.Topic
+﻿@model MyClass.Models.Supplier
 
 @{
     ViewBag.Title = "Xóa danh mục";
@@ -21,8 +21,8 @@
                             <strong>Xác nhận xóa danh mục sản phẩm</strong>
                         </div>
                         <div class="col-md-6 text-right">
-                            <a href="@Url.Action("Edit","Topic",  new { id = Model.Id })" class="btn btn-sm btn-info"><i class="fas fa-edit"></i> Cập nhật</a>
-                            <a href="@Url.Action("Index","Topic")" class="btn btn-sm btn-info"><i class="fas fa-long-arrow-alt-left"></i> Quay lại</a>
+                            <a href="@Url.Action("Edit","Supplier",  new { id = Model.Id })" class="btn btn-sm btn-info"><i class="fas fa-edit"></i> Cập nhật</a>
+                            <a href="@Url.Action("Index","Supplier")" class="btn btn-sm btn-info"><i class="fas fa-long-arrow-alt-left"></i> Quay lại</a>
                              <button class="btn btn-sm btn-danger" type="submit"><i class="fas fa-trash-alt"></i> Xóa</button>
                         </div>
                     </div>

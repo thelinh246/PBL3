@@ -23,7 +23,7 @@ namespace MyClass.Models
 
         public DbSet<Slider> Sliders { get; set; }
 
-        public DbSet<Supplider> Supplider { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
         public DbSet<Topic> Topics { get; set; }
 
